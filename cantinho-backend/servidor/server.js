@@ -26,6 +26,8 @@ app.get("/", (req, res) => {
 app.use("/comandas", comandasRouter);
 app.use("/cardapio", cardapioRouter);
 app.use("/itens-pedido", itensPedidoRouter);
+app.use("/usuarios", usuarioRouter);
+app.use("/pedidos", pedidosRouter);
 
 const PORT = process.env.PORT || 3000;
 //Script simples para garantir o schema e depois conectar com o servidor
