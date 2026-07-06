@@ -1,6 +1,7 @@
 const pool = require("./db");
 
-//Função que garante que o schema vai existir, sem depender do banco
+//Função que garante que o schema do banco vai existir, sem depender do banco
+// Se o banco estiver vazio as tabelas surgirão junto com a primeira solicitação
 async function garantirSchema() {
   await pool.query(`
   CREATE TABLE IF NOT EXISTS usuarios (

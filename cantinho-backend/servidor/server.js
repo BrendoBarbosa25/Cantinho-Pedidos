@@ -10,6 +10,8 @@ const garantirSchema = require("./schema");
 const comandasRouter = require("./routes/comandas");
 const cardapioRouter = require("./routes/cardapio");
 const itensPedidoRouter = require("./routes/itensPedido");
+const usuarioRouter = require("./routes/usuario");
+const pedidosRouter = require("./routes/pedidos");
 
 const app = express();
 
