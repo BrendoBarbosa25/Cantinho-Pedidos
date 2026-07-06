@@ -24,7 +24,7 @@ app.use("/cardapio", cardapioRouter);
 app.use("/itens-comanda", itensComandaRouter);
 
 const PORT = process.env.PORT || 3000;
-
+//Script simples para garantir o schema e depois conectar com o servidor
 garantirSchema()
   .then(() => {
     app.listen(PORT, () => {
