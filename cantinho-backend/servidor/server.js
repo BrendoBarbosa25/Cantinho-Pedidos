@@ -5,10 +5,11 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const garantirSchema = require("./schema");
+
 //Requisição das rotas
 const comandasRouter = require("./routes/comandas");
 const cardapioRouter = require("./routes/cardapio");
-const itensComandaRouter = require("./routes/itensComanda");
+const itensPedidoRouter = require("./routes/itensPedido");
 
 const app = express();
 
@@ -16,12 +17,13 @@ app.use(cors());
 app.use(express.json());
 
 app.get("/", (req, res) => {
-  res.json({ mensagem: "API Cantinho funcionando" });
+  res.json({ mensagem: "Servidor ativo e funcionando" });
 });
 
+//Uso das rotas, garantem um crud exclusivo para cada tabela
 app.use("/comandas", comandasRouter);
 app.use("/cardapio", cardapioRouter);
-app.use("/itens-comanda", itensComandaRouter);
+app.use("/itens-pedido", itensPedidoRouter);
 
 const PORT = process.env.PORT || 3000;
 //Script simples para garantir o schema e depois conectar com o servidor

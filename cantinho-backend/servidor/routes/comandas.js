@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const pool = require("../db");
 
+// Get principal, pega somente comandas abertas
 router.get("/", async (req, res) => {
   try {
     const result = await pool.query(
@@ -14,6 +15,7 @@ router.get("/", async (req, res) => {
   }
 });
 
+// Get especifico, pega uma comanda só
 router.get("/:id", async (req, res) => {
   const { id } = req.params;
 
@@ -52,6 +54,7 @@ router.get("/:id", async (req, res) => {
   }
 });
 
+// Postizinho básico
 router.post("/", async (req, res) => {
   const { numero_mesa } = req.body;
 

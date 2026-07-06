@@ -2,10 +2,11 @@ const express = require("express");
 const router = express.Router();
 const pool = require("../db");
 
+// Rota de post, contem validações simples
 router.post("/", async (req, res) => {
-  const { comanda_id, item_cardapio_id, quantidade, observacao } = req.body;
+  const { pedido_id, item_cardapio_id, quantidade, observacao } = req.body;
 
-  if (!comanda_id || !item_cardapio_id || !quantidade) {
+  if (!pedido_id || !item_cardapio_id || !quantidade) {
     return res.status(400).json({
       erro: "comanda_id, item_cardapio_id e quantidade são obrigatórios",
     });
@@ -19,8 +20,8 @@ router.post("/", async (req, res) => {
 
   try {
     const result = await pool.query(
-      `INSERT INTO itens_comanda
-       (comanda_id, item_cardapio_id, quantidade, observacao)
+      `INSERT INTO itens_pedido
+       (pedido_id, item_cardapio_id, quantidade, observacao)
        VALUES ($1, $2, $3, $4)
        RETURNING *`,
       [comanda_id, item_cardapio_id, quantidade, observacao || null],
@@ -35,6 +36,7 @@ router.post("/", async (req, res) => {
   }
 });
 
+// Rota delete basica
 router.delete("/:id", async (req, res) => {
   const { id } = req.params;
 
@@ -54,6 +56,7 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
+// Rota de get especifica pro total
 router.get("/total/:comanda_id", async (req, res) => {
   const { comanda_id } = req.params;
 
