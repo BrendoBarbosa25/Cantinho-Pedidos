@@ -40,8 +40,8 @@ export default function Comanda({ route, navigation }) {
         carregarDados();
     }, []);
 
-    // O total NÃO é calculado só aqui pra exibição definitiva — o mob (seção 4.2)
-    // diz que a fonte de verdade é o banco. Isso aqui é só pra feedback visual
+    // O total NÃO é calculado só aqui pra exibição definitiva
+    // Isso aqui é só pra feedback visual
     // rápido na tela; o valor oficial vem quando a comanda é fechada.
     const total = itens.reduce((soma, item) => {
         return soma + item.quantidade * item.preco;
