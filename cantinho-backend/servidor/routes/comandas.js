@@ -1,9 +1,10 @@
 const express = require("express");
 const router = express.Router();
 const pool = require("../db");
+const auth = require("../middlewares/auth")
 
 // Lista todas as comandas abertas
-router.get("/", async (req, res) => {
+router.get("/", auth, async (req, res) => {
   try {
     const result = await pool.query(
       "SELECT * FROM comandas WHERE status = 'aberta' ORDER BY data_abertura"

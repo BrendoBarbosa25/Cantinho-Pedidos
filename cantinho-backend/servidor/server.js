@@ -13,12 +13,12 @@ const cardapioRouter = require("./routes/cardapio");
 const itensPedidoRouter = require("./routes/itensPedido");
 const usuarioRouter = require("./routes/usuario");
 const pedidosRouter = require("./routes/pedidos");
+const loginRouter = require("./routes/login");
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
-app.use(dotenv())
 
 app.get("/", (req, res) => {
   res.json({ mensagem: "Servidor ativo e funcionando" });
@@ -30,6 +30,7 @@ app.use("/cardapio", cardapioRouter);
 app.use("/itens-pedido", itensPedidoRouter);
 app.use("/usuarios", usuarioRouter);
 app.use("/pedidos", pedidosRouter);
+app.use("/login", loginRouter)
 
 const PORT = process.env.PORT || 3000;
 //Script simples para garantir o schema e depois conectar com o servidor
