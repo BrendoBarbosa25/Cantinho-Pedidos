@@ -5,6 +5,7 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const garantirSchema = require("./schema");
+const dotenv = require("dotenv").config();
 
 //Requisição das rotas
 const comandasRouter = require("./routes/comandas");
@@ -17,6 +18,7 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
+app.use(dotenv())
 
 app.get("/", (req, res) => {
   res.json({ mensagem: "Servidor ativo e funcionando" });
