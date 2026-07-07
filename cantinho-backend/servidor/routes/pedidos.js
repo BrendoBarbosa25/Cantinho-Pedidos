@@ -1,9 +1,11 @@
 const express = require("express");
 const router = express.Router();
 const pool = require("../db");
+const auth = require("../middlewares/auth");
+const authorize = require("../middlewares/authorize");
 
 // Criar um novo pedido
-router.post("/", async (req, res) => {
+router.post("/", auth, authorize("admin", "garcom"), async (req, res) => {
   const { comanda_id } = req.body;
 
   if (!comanda_id) {
@@ -30,7 +32,7 @@ router.post("/", async (req, res) => {
 });
 
 // Listar todos os pedidos de uma comanda
-router.get("/comanda/:comanda_id", async (req, res) => {
+router.get("/comanda/:comanda_id", auth, authorize("admin", "garcom", "cozinha"), async (req, res) => {
   const { comanda_id } = req.params;
 
   try {
@@ -51,7 +53,7 @@ router.get("/comanda/:comanda_id", async (req, res) => {
 });
 
 // Buscar um pedido específico
-router.get("/:id", async (req, res) => {
+router.get("/:id", auth, authorize("admin", "garcom", "cozinha"), async (req, res) => {
   const { id } = req.params;
 
   try {
@@ -77,7 +79,7 @@ router.get("/:id", async (req, res) => {
 });
 
 // Atualizar status do pedido
-router.patch("/:id/status", async (req, res) => {
+router.patch("/:id/status", auth, authorize("admin", "garcom", "cozinha"), async (req, res) => {
   const { id } = req.params;
   const { status } = req.body;
 
@@ -111,7 +113,7 @@ router.patch("/:id/status", async (req, res) => {
 });
 
 // Excluir um pedido
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", auth, authorize("admin"), async (req, res) => {
   const { id } = req.params;
 
   try {

@@ -2,11 +2,13 @@ const express = require("express");
 const bcrypt = require("bcrypt");
 const router = express.Router();
 const pool = require("../db");
+const auth = require("../middlewares/auth");
+const authorize = require("../middlewares/authorize");
 
 const SALT_ROUNDS = 10;
 
 // Criar usuário
-router.post("/", async (req, res) => {
+router.post("/", auth, authorize("admin"), async (req, res) => {
   const { nome_usuario, senha, role } = req.body;
 
   if (!nome_usuario || !senha) {
@@ -49,7 +51,7 @@ router.post("/", async (req, res) => {
 });
 
 // Listar usuários
-router.get("/", async (req, res) => {
+router.get("/", auth, authorize("admin"), async (req, res) => {
   try {
     const result = await pool.query(
       `SELECT
@@ -70,7 +72,7 @@ router.get("/", async (req, res) => {
 });
 
 // Buscar usuário por id
-router.get("/:id", async (req, res) => {
+router.get("/:id", auth, authorize("admin"), async (req, res) => {
   const { id } = req.params;
 
   try {
@@ -100,7 +102,7 @@ router.get("/:id", async (req, res) => {
 });
 
 // Atualizar role
-router.patch("/:id/role", async (req, res) => {
+router.patch("/:id/role", auth, authorize("admin"), async (req, res) => {
   const { id } = req.params;
   const { role } = req.body;
 
@@ -134,7 +136,7 @@ router.patch("/:id/role", async (req, res) => {
 });
 
 // Excluir usuário
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", auth, authorize(), async (req, res) => {
   const { id } = req.params;
 
   try {

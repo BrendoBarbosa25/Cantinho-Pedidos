@@ -1,8 +1,10 @@
 const express = require("express");
 const router = express.Router();
 const pool = require("../db");
+const auth = require("../middlewares/auth");
+const authorize = require("../middlewares/authorize");
 
-router.get("/", async (req, res) => {
+router.get("/", auth, authorize("admin", "garcom", "cozinha"), async (req, res) => {
   try {
     const result = await pool.query(
       "SELECT * FROM itens_cardapio ORDER BY categoria, nome",
@@ -14,7 +16,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-router.post("/", async (req, res) => {
+router.post("/", auth, authorize("admin", "cozinha"), async (req, res) => {
   const { nome, preco, categoria } = req.body;
 
   if (!nome || !preco || !categoria) {
@@ -43,7 +45,7 @@ router.post("/", async (req, res) => {
   }
 });
 
-router.put("/:id", async (req, res) => {
+router.put("/:id", auth, authorize("admin", "cozinha"), async (req, res) => {
   const { id } = req.params;
   const { nome, preco, categoria } = req.body;
 
@@ -72,7 +74,7 @@ router.put("/:id", async (req, res) => {
   }
 });
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", auth, authorize("admin", "cozinha"), async (req, res) => {
   const { id } = req.params;
 
   try {

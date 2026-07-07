@@ -1,10 +1,11 @@
 const express = require("express");
 const router = express.Router();
 const pool = require("../db");
-const auth = require("../middlewares/auth")
+const auth = require("../middlewares/auth");
+const authorize = require("../middlewares/authorize");
 
 // Lista todas as comandas abertas
-router.get("/", auth, async (req, res) => {
+router.get("/", auth, authorize("admin", "garcom"), async (req, res) => {
   try {
     const result = await pool.query(
       "SELECT * FROM comandas WHERE status = 'aberta' ORDER BY data_abertura"
@@ -17,7 +18,7 @@ router.get("/", auth, async (req, res) => {
 });
 
 // Busca uma comanda específica junto com seus pedidos e itens
-router.get("/:id", async (req, res) => {
+router.get("/:id", auth, authorize("admin", "garcom"), async (req, res) => {
   const { id } = req.params;
 
   try {
@@ -68,7 +69,7 @@ router.get("/:id", async (req, res) => {
 });
 
 // Cria uma nova comanda
-router.post("/", async (req, res) => {
+router.post("/", auth, authorize("admin", "garcom"), async (req, res) => {
   const { mesa_id } = req.body;
 
   if (!mesa_id) {
@@ -96,7 +97,7 @@ router.post("/", async (req, res) => {
 });
 
 // Fecha uma comanda
-router.patch("/:id/fechar", async (req, res) => {
+router.patch("/:id/fechar", auth, authorize("admin", "garcom"), async (req, res) => {
   const { id } = req.params;
 
   try {

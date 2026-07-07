@@ -1,9 +1,11 @@
 const express = require("express");
 const router = express.Router();
 const pool = require("../db");
+const auth = require("../middlewares/auth");
+const authorize = require("../middlewares/authorize");
 
 // Criar um item em um pedido
-router.post("/", async (req, res) => {
+router.post("/", auth, authorize("admin", "garcom"), async (req, res) => {
   const { pedido_id, item_cardapio_id, quantidade, observacao } = req.body;
 
   if (!pedido_id || !item_cardapio_id || quantidade === undefined) {
@@ -67,7 +69,7 @@ router.post("/", async (req, res) => {
 });
 
 // Listar todos os itens de um pedido
-router.get("/:pedido_id", async (req, res) => {
+router.get("/:pedido_id", auth, authorize("admin", "garcom", "cozinha"), async (req, res) => {
   const { pedido_id } = req.params;
 
   try {
@@ -97,7 +99,7 @@ router.get("/:pedido_id", async (req, res) => {
 });
 
 // Remover um item do pedido
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", auth, authorize("admin", "garcom"), async (req, res) => {
   const { id } = req.params;
 
   try {
@@ -124,7 +126,7 @@ router.delete("/:id", async (req, res) => {
 });
 
 // Calcular o total de um pedido
-router.get("/total/:pedido_id", async (req, res) => {
+router.get("/total/:pedido_id", auth, authorize("admin", "garcom"), async (req, res) => {
   const { pedido_id } = req.params;
 
   try {
