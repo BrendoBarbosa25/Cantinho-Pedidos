@@ -14,12 +14,12 @@ const itensPedidoRouter = require("./routes/itensPedido");
 const usuarioRouter = require("./routes/usuario");
 const pedidosRouter = require("./routes/pedidos");
 const loginRouter = require("./routes/login");
+const mesasRouter = require("./routes/mesas");
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
-
 app.get("/", (req, res) => {
   res.json({ mensagem: "Servidor ativo e funcionando" });
 });
@@ -31,6 +31,7 @@ app.use("/itens-pedido", itensPedidoRouter);
 app.use("/usuarios", usuarioRouter);
 app.use("/pedidos", pedidosRouter);
 app.use("/login", loginRouter)
+app.use("/mesas", mesasRouter);
 
 const PORT = process.env.PORT || 3000;
 //Script simples para garantir o schema e depois conectar com o servidor

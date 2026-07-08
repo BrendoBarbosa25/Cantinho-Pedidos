@@ -138,7 +138,7 @@ router.patch("/:id/role", auth, authorize("admin"), async (req, res) => { //rota
 });
 
 // Excluir usuário
-router.delete("/:id", auth, authorize(), async (req, res) => {
+router.delete("/:id", auth, authorize("admin"), async (req, res) => {
   const { id } = req.params;
 
   try {

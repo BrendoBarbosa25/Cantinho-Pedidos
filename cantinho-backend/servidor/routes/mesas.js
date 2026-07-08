@@ -48,7 +48,8 @@ router.post("/", auth, authorize("admin"), async (req, res) => { //apenas o admi
 // Muda o status da mesa (disponivel / reservada)
 router.patch("/:id/status", auth, authorize("admin", "garcom"), async (req, res) => { //patch modifica apenas uma parte especiica
                                                                                       //nesse caso o patch modifica o status da mesa (disponivel ou reservada) (precisamos do id pra modificar a mesa certa)
-  const { status } = req.body;                                                        //put modifica TUDO (nesse caso, o put modificaria o numero e o status da mesa)
+  const { status } = req.body;                                                      //put modifica TUDO (nesse caso, o put modificaria o numero e o status da mesa)
+  const { id } = req.params; //extrai o id da mesa dos parâmetros da requisição (params) 
   if (!["disponivel", "reservada"].includes(status)) { //includes verifica se o status enviado está dentro do array (disponivel ou reservada). Se não estiver, retorna erro
                                                        //(includes é uma funcao que verifica se um array contém um determinado elemento)
                                                        

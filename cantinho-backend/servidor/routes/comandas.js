@@ -5,7 +5,7 @@ const auth = require("../middlewares/auth");
 const authorize = require("../middlewares/authorize");
 
 // Lista todas as comandas abertas
-router.get("/", auth, authorize("admin", "garcom"), async (req, res) => { // auth é autenticação (verifica o usuario pelo token jwt), authorize verifica oq o usuario pode fazer (nesse caso o role admin e garçon podem)
+router.get("/", auth, authorize("admin", "garcom", "cozinha"), async (req, res) => {// auth é autenticação (verifica o usuario pelo token jwt), authorize verifica oq o usuario pode fazer (nesse caso o role admin e garçon podem)
   try { 
     const result = await pool.query( // Query significa consulta. Pool faz com que o ponto de conexão fique sempre ligado, apenas esperando a requisição para dar a reposta
       "SELECT * FROM comandas WHERE status = 'aberta' ORDER BY data_abertura"
