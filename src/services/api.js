@@ -3,7 +3,7 @@ import { getToken, limparSessao } from './auth';
 
 // Troque pelo IP local (enquanto testando na mesma rede) ou
 // pela URL do Render quando o backend estiver hospedado.
-const BASE_URL = 'http://192.168.1.6:3000';
+const BASE_URL = 'https://cantinho-pedidos.onrender.com';
 // ---------------------------------------------------------------
 // Função central — toda chamada passa por aqui.
 // Anexa o token automaticamente e trata erros de forma padronizada.
