@@ -3,6 +3,8 @@ const router = express.Router();
 const pool = require("../db");
 const auth = require("../middlewares/auth");
 const authorize = require("../middlewares/authorize");
+const relatoriosRoutes = require("./routes/relatorios");
+app.use("/relatorios", relatoriosRoutes);
 
 // Faturamento por período — soma o valor_total das comandas fechadas
 // agrupado por dia. Se não vier inicio/fim, usa os últimos 7 dias.
