@@ -177,6 +177,17 @@ export function criarUsuario(nome_usuario, senha, role) {
   });
 }
 
+// ---------------------------------------------------------------
+// Relatórios (admin)
+// ---------------------------------------------------------------
+export function buscarFaturamento(inicio, fim) {
+  const params = new URLSearchParams();
+  if (inicio) params.append('inicio', inicio);
+  if (fim) params.append('fim', fim);
+  const query = params.toString() ? `?${params.toString()}` : '';
+  return apiFetch(`/relatorios/faturamento${query}`);
+}
+
 export function listarUsuarios() {
   return apiFetch('/usuarios');
 }

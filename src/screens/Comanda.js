@@ -95,23 +95,49 @@ export default function Comanda({ route, navigation }) {
     }
   }
 
-  async function aoRemoverItem(itemId) {
-    try {
-      await removerItem(itemId);
-      await carregarDados();
-    } catch (err) {
-      Alert.alert('Erro', err.message);
-    }
-  }
+function aoRemoverItem(itemId) {
+  Alert.alert(
+    'Remover item',
+    'Tem certeza que deseja remover este item do pedido?',
+    [
+      { text: 'Cancelar', style: 'cancel' },
+      {
+        text: 'Remover',
+        style: 'destructive',
+        onPress: async () => {
+          try {
+            await removerItem(itemId);
+            await carregarDados();
+          } catch (err) {
+            Alert.alert('Erro', err.message);
+          }
+        },
+      },
+    ]
+  );
+}
 
-  async function aoFecharComanda() {
-    try {
-      await fecharComanda(comandaId);
-      navigation.goBack();
-    } catch (err) {
-      Alert.alert('Erro', err.message);
-    }
-  }
+function aoFecharComanda() {
+  Alert.alert(
+    'Fechar comanda',
+    `Fechar a comanda da mesa ${numeroMesa}? O total de R$ ${totalGeral.toFixed(2)} será cobrado.`,
+    [
+      { text: 'Cancelar', style: 'cancel' },
+      {
+        text: 'Fechar comanda',
+        style: 'destructive',
+        onPress: async () => {
+          try {
+            await fecharComanda(comandaId);
+            navigation.goBack();
+          } catch (err) {
+            Alert.alert('Erro', err.message);
+          }
+        },
+      },
+    ]
+  );
+}
 
   if (carregando) {
     return (

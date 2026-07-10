@@ -51,6 +51,12 @@ export default function Dashboard({ navigation }) {
 
       <View style={{ height: 12 }} />
 
+      <BotaoHaptico onPress={() => navigation.navigate('RelatorioFinanceiro')}>
+        Ver relatório financeiro
+      </BotaoHaptico>
+
+      <View style={{ height: 12 }} />
+
       <BotaoHaptico onPress={() => navigation.navigate('CriarUsuario')}>
         Criar novo usuário
       </BotaoHaptico>

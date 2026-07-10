@@ -11,6 +11,7 @@ import Comanda from '../screens/Comanda';
 import Cozinha from '../screens/Cozinha';
 import Dashboard from '../screens/admin/Dashboard';
 import CriarUsuario from '../screens/admin/CriarUsuario';
+import RelatorioFinanceiro from '../screens/admin/RelatorioFinanceiro';
 
 const Stack = createNativeStackNavigator();
 
@@ -54,6 +55,7 @@ function StackAdmin() {
       <Stack.Screen name="ListaMesas" component={ListaMesas} options={{ title: 'Mesas' }} />
       <Stack.Screen name="Comanda" component={Comanda} options={{ title: 'Comanda' }} />
       <Stack.Screen name="Cozinha" component={Cozinha} options={{ title: 'Fila da cozinha' }} />
+      
     </Stack.Navigator>
   );
 }

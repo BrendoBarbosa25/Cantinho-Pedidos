@@ -15,7 +15,7 @@ const usuarioRouter = require("./routes/usuario");
 const pedidosRouter = require("./routes/pedidos");
 const loginRouter = require("./routes/login");
 const mesasRouter = require("./routes/mesas");
-
+const relatoriosRouter = require("./routes/relatorios"); 
 const app = express();
 
 app.use(cors());
@@ -32,6 +32,7 @@ app.use("/usuarios", usuarioRouter);
 app.use("/pedidos", pedidosRouter);
 app.use("/login", loginRouter)
 app.use("/mesas", mesasRouter);
+app.use("/relatorios", relatoriosRouter);
 
 const PORT = process.env.PORT || 3000;
 //Script simples para garantir o schema e depois conectar com o servidor
