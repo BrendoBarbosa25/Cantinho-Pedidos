@@ -77,6 +77,8 @@ export function atualizarStatusMesa(mesaId, status) {
 // ---------------------------------------------------------------
 // Comandas
 // ---------------------------------------------------------------
+// OBS: o backend agora retorna também "numero_mesa" em cada comanda
+// (útil pra Cozinha e pro Garçom, que não recarregam a lista de mesas toda hora).
 export function listarComandas() {
   return apiFetch('/comandas');
 }
@@ -119,16 +121,35 @@ export function atualizarStatusPedido(pedidoId, status) {
   });
 }
 
-// pega pedidos com um status específico — usado no polling da cozinha/garçom
+// Pega pedidos com um status específico — usado no polling da cozinha/garçom.
+// ALTERADO: agora cada pedido retornado já vem enriquecido com:
+//  - numero_mesa e comanda_id -> pra Cozinha mostrar "de qual mesa" e
+//    pro Garçom identificar em qual mesa acender o aviso de "pronto"
+//  - itens -> pra Cozinha mostrar os itens do pedido, não só o número dele
 export async function listarPedidosPorStatus(status) {
-  // não existe rota direta pra isso ainda — filtramos no app por enquanto,
-  // buscando pedidos de todas as comandas abertas.
-  // Se o volume crescer, vale pedir ao Vitor uma rota GET /pedidos?status=...
   const comandas = await listarComandas();
+
   const todosPedidos = await Promise.all(
-    comandas.map((c) => listarPedidosDaComanda(c.id))
+    comandas.map(async (c) => {
+      const pedidosDaComanda = await listarPedidosDaComanda(c.id);
+      return pedidosDaComanda.map((p) => ({
+        ...p,
+        comanda_id: c.id,
+        numero_mesa: c.numero_mesa,
+      }));
+    })
   );
-  return todosPedidos.flat().filter((p) => p.status === status);
+
+  const pedidosFiltrados = todosPedidos.flat().filter((p) => p.status === status);
+
+  const pedidosComItens = await Promise.all(
+    pedidosFiltrados.map(async (pedido) => ({
+      ...pedido,
+      itens: await listarItensDoPedido(pedido.id),
+    }))
+  );
+
+  return pedidosComItens;
 }
 
 // ---------------------------------------------------------------

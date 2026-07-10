@@ -2,6 +2,7 @@
 import { useState, useCallback } from 'react';
 import { View, Text, FlatList, StyleSheet, ActivityIndicator, Alert } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
+import * as Haptics from 'expo-haptics';
 import {
   listarPedidosDaComanda,
   listarItensDoPedido,
@@ -104,6 +105,7 @@ export default function Comanda({ route, navigation }) {
     }
   }
 
+  // Efetivamente fecha a comanda no backend (chamado só depois da confirmação)
   async function aoFecharComanda() {
     try {
       await fecharComanda(comandaId);
@@ -111,6 +113,33 @@ export default function Comanda({ route, navigation }) {
     } catch (err) {
       Alert.alert('Erro', err.message);
     }
+  }
+
+  // Pop-up de confirmação — "Quer fechar a comanda (mesa) com o valor (x)?"
+  // Cada botão dispara um haptic diferente antes de resolver a ação:
+  // "Sim" segue com o fechamento, "Não" só cancela.
+  function confirmarFechamento() {
+    Alert.alert(
+      'Fechar comanda',
+      `Quer fechar a comanda (Mesa ${numeroMesa}) com o valor (R$ ${totalGeral.toFixed(2)})?`,
+      [
+        {
+          text: 'Não',
+          style: 'cancel',
+          onPress: () => {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+          },
+        },
+        {
+          text: 'Sim',
+          onPress: () => {
+            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+            aoFecharComanda();
+          },
+        },
+      ],
+      { cancelable: true }
+    );
   }
 
   if (carregando) {
@@ -180,7 +209,7 @@ export default function Comanda({ route, navigation }) {
             </>
           )}
 
-          <BotaoHaptico onPress={aoFecharComanda} style={styles.botaoFechar}>
+          <BotaoHaptico onPress={confirmarFechamento} style={styles.botaoFechar}>
             Fechar comanda
           </BotaoHaptico>
         </View>

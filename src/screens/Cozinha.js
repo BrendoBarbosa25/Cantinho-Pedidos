@@ -14,6 +14,8 @@ export default function Cozinha() {
     try {
       setCarregando(true);
       setErro(null);
+      // listarPedidosPorStatus já retorna cada pedido com numero_mesa,
+      // comanda_id e itens (ver services/api.js)
       const pendentes = await listarPedidosPorStatus('pendente');
       setPedidos(pendentes);
     } catch (err) {
@@ -66,7 +68,20 @@ export default function Cozinha() {
       ListEmptyComponent={<Text style={styles.vazio}>Nenhum pedido pendente</Text>}
       renderItem={({ item: pedido }) => (
         <View style={styles.card}>
-          <Text style={styles.tituloCard}>Pedido #{pedido.id}</Text>
+          <Text style={styles.tituloCard}>
+            Pedido #{pedido.id} — Mesa {pedido.numero_mesa}
+          </Text>
+          <Text style={styles.subTituloCard}>Comanda #{pedido.comanda_id}</Text>
+
+          <View style={styles.listaItens}>
+            {pedido.itens.map((item) => (
+              <Text key={item.id} style={styles.linhaItem}>
+                {item.quantidade}x {item.nome}
+                {item.observacao ? ` (${item.observacao})` : ''}
+              </Text>
+            ))}
+          </View>
+
           <BotaoHaptico onPress={() => marcarPronto(pedido.id)}>
             Marcar como pronto
           </BotaoHaptico>
@@ -82,5 +97,8 @@ const styles = StyleSheet.create({
   vazio: { textAlign: 'center', marginTop: 32, color: '#888' },
   lista: { padding: 16, gap: 12 },
   card: { backgroundColor: '#fff3e0', padding: 16, borderRadius: 8 },
-  tituloCard: { fontSize: 18, fontWeight: 'bold', marginBottom: 8 },
+  tituloCard: { fontSize: 18, fontWeight: 'bold', marginBottom: 2 },
+  subTituloCard: { fontSize: 13, color: '#795548', marginBottom: 10 },
+  listaItens: { marginBottom: 12 },
+  linhaItem: { fontSize: 15, paddingVertical: 2 },
 });
