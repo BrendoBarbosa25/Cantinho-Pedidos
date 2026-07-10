@@ -25,16 +25,24 @@ async function apiFetch(caminho, opcoes = {}) {
     headers,
   });
 
-  // Se o token expirou ou é inválido, limpa a sessão local —
-  // a tela que chamou isso deve tratar esse erro e mandar pro login.
   if (response.status === 401) {
     await limparSessao();
   }
 
-  const corpo = await response.json().catch(() => ({}));
+  // Antes: assumia sempre JSON e escondia o motivo real do erro.
+  // Agora: se não vier JSON (ex: 404 do Express, HTML de erro do Render),
+  // a gente pega o texto puro e mostra o status, pra dar pra saber a causa.
+  const contentType = response.headers.get('content-type') || '';
+  let corpo = {};
+  if (contentType.includes('application/json')) {
+    corpo = await response.json().catch(() => ({}));
+  } else {
+    const texto = await response.text().catch(() => '');
+    corpo = { erro: texto ? texto.slice(0, 200) : null };
+  }
 
   if (!response.ok) {
-    throw new Error(corpo.erro || 'erro na requisição');
+    throw new Error(corpo.erro || `erro na requisição (status ${response.status})`);
   }
 
   return corpo;

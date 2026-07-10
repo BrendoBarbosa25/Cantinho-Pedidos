@@ -55,11 +55,10 @@ function StackAdmin() {
       <Stack.Screen name="ListaMesas" component={ListaMesas} options={{ title: 'Mesas' }} />
       <Stack.Screen name="Comanda" component={Comanda} options={{ title: 'Comanda' }} />
       <Stack.Screen name="Cozinha" component={Cozinha} options={{ title: 'Fila da cozinha' }} />
-      
+      <Stack.Screen name="RelatorioFinanceiro" component={RelatorioFinanceiro} options={{ title: 'Relatório financeiro' }} />
     </Stack.Navigator>
   );
 }
-
 export default function Navegacao() {
   const { usuario, carregando } = useAuth();
 
