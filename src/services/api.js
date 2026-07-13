@@ -48,16 +48,14 @@ async function apiFetch(caminho, opcoes = {}) {
   return corpo;
 }
 
-// ---------------------------------------------------------------
-// Login
-// ---------------------------------------------------------------
-export async function login(nome_usuario, senha) {
-  // login não usa apiFetch porque ainda não existe token nesse momento
-  const response = await fetch(`${BASE_URL}/login`, {
+//login
+export async function login(nome_usuario, senha) { //o javascript preenche o nome_usuario, senha pela ordem.                                             
+  // login não usa apiFetch porque ainda não existe token nesse momento.
+  const response = await fetch(`${BASE_URL}/login`, {    
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ nome_usuario, senha }),
-  });
+    body: JSON.stringify({ nome_usuario, senha }),  //isso aqui n depende da ordem, o que depende é lá em cima no login(nome_usuario, senha)
+  });                                             
 
   const corpo = await response.json().catch(() => ({}));
 
