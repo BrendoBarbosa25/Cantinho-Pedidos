@@ -2,6 +2,7 @@
 import { useState, useCallback } from 'react';
 import { View, Text, FlatList, StyleSheet, ActivityIndicator, Alert } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
+import * as Haptics from 'expo-haptics';
 import {
   listarPedidosDaComanda,
   listarItensDoPedido,
@@ -95,49 +96,64 @@ export default function Comanda({ route, navigation }) {
     }
   }
 
-function aoRemoverItem(itemId) {
-  Alert.alert(
-    'Remover item',
-    'Tem certeza que deseja remover este item do pedido?',
-    [
-      { text: 'Cancelar', style: 'cancel' },
-      {
-        text: 'Remover',
-        style: 'destructive',
-        onPress: async () => {
-          try {
-            await removerItem(itemId);
-            await carregarDados();
-          } catch (err) {
-            Alert.alert('Erro', err.message);
-          }
+  function aoRemoverItem(itemId) {
+    Alert.alert(
+      'Remover item',
+      'Tem certeza que deseja remover este item do pedido?',
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        {
+          text: 'Remover',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await removerItem(itemId);
+              await carregarDados();
+            } catch (err) {
+              Alert.alert('Erro', err.message);
+            }
+          },
         },
-      },
-    ]
-  );
-}
+      ]
+    );
+  }
 
-function aoFecharComanda() {
-  Alert.alert(
-    'Fechar comanda',
-    `Fechar a comanda da mesa ${numeroMesa}? O total de R$ ${totalGeral.toFixed(2)} será cobrado.`,
-    [
-      { text: 'Cancelar', style: 'cancel' },
-      {
-        text: 'Fechar comanda',
-        style: 'destructive',
-        onPress: async () => {
-          try {
-            await fecharComanda(comandaId);
-            navigation.goBack();
-          } catch (err) {
-            Alert.alert('Erro', err.message);
-          }
+  // Efetivamente fecha a comanda no backend (chamado só depois da confirmação)
+  async function aoFecharComanda() {
+    try {
+      await fecharComanda(comandaId);
+      navigation.goBack();
+    } catch (err) {
+      Alert.alert('Erro', err.message);
+    }
+  }
+
+  // Pop-up de confirmação — "Quer fechar a comanda (mesa) com o valor (x)?"
+  // Cada botão dispara um haptic diferente antes de resolver a ação:
+  // "Sim" segue com o fechamento, "Não" só cancela.
+  function confirmarFechamento() {
+    Alert.alert(
+      'Fechar comanda',
+      `Quer fechar a comanda (Mesa ${numeroMesa}) com o valor (R$ ${totalGeral.toFixed(2)})?`,
+      [
+        {
+          text: 'Não',
+          style: 'cancel',
+          onPress: () => {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+          },
         },
-      },
-    ]
-  );
-}
+        {
+          text: 'Sim',
+          onPress: () => {
+            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+            aoFecharComanda();
+          },
+        },
+      ],
+      { cancelable: true }
+    );
+  }
 
   if (carregando) {
     return (
@@ -206,7 +222,7 @@ function aoFecharComanda() {
             </>
           )}
 
-          <BotaoHaptico onPress={aoFecharComanda} style={styles.botaoFechar}>
+          <BotaoHaptico onPress={confirmarFechamento} style={styles.botaoFechar}>
             Fechar comanda
           </BotaoHaptico>
         </View>
