@@ -45,6 +45,7 @@ export default function Login() {
       <TextInput
         style={styles.input}
         placeholder="senha"
+        autoCapitalize="none"
         secureTextEntry
         value={senha}
         onChangeText={setSenha}
