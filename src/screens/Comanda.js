@@ -32,15 +32,17 @@ export default function Comanda({ route, navigation }) {
       setCarregando(true);
       setErro(null);
 
-      const [listaPedidos, listaCardapio] = await Promise.all([
+      const [listaPedidos, listaCardapio] = await Promise.all([ //Promisse.all permite executar varias operações assincronas ao mesmo tempo e esperar que todas elas terminem para continuar o codigo
         listarPedidosDaComanda(comandaId),
         listarCardapio(),
       ]);
 
       // busca os itens de cada pedido (uma chamada por pedido)
-      const pedidosComItens = await Promise.all(
-        listaPedidos.map(async (pedido) => ({
-          ...pedido,
+      const pedidosComItens = await Promise.all( 
+        listaPedidos.map(async (pedido) => ({ //.map é um transformador de listas. Ele passa por cada item do array (cada pedido) e devolve um item novo para criar uma lista novinha no final
+          //O async foi colocado ali porque dentro da transformação de cada pedido, você precisa fazer uma operação demorada: buscar os itens no servidor
+          ...pedido, // O '...' (Spread) copia/espalha todas as propriedades do pedido original (ex: id, mesa, total)
+    // Isso garante que os dados antigos não sejam apagados ou perdidos no novo objeto
           itens: await listarItensDoPedido(pedido.id),
         }))
       );
@@ -61,18 +63,17 @@ export default function Comanda({ route, navigation }) {
   );
 
   // O pedido "atual" é o último pendente — é nele que novos itens entram.
-  // Se não existir nenhum pendente (primeiro pedido, ou o último já foi
-  // entregue e o cliente quer pedir de novo), precisa criar um pedido novo.
-  const pedidoAtual = pedidos.find((p) => p.status === 'pendente');
+  // Se não existir nenhum pendente (primeiro pedido, ou o último já foi entregue e o cliente quer pedir de novo), precisa criar um pedido novo
+  const pedidoAtual = pedidos.find((p) => p.status === 'pendente'); 
 
-  const totalGeral = pedidos.reduce((soma, pedido) => {
+  const totalGeral = pedidos.reduce((soma, pedido) => { 
     const totalPedido = pedido.itens.reduce(
       (s, item) => s + item.quantidade * item.preco,
-      0
+      0 //esse 0 é o ponto inicial da soma
     );
     return soma + totalPedido;
-  }, 0);
-
+  }, 0); //0 é o ponto inicial da soma
+//Se nao colocar o 0, o JavaScript vai pegar o primeiro objeto inteiro da lista (o primeiro pedido ou o primeiro item) e tentar somar com o preço do segundo
   async function aoIniciarNovoPedido() {
     try {
       await criarPedido(comandaId);

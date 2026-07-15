@@ -25,9 +25,9 @@ async function garantirSchema() {
     categoria TEXT NOT NULL
   );
 
-  CREATE TABLE IF NOT EXISTS comandas (
+  CREATE TABLE IF NOT EXISTS comandas (  
     id SERIAL PRIMARY KEY,
-    mesa_id INT REFERENCES mesas(id),
+    mesa_id INT REFERENCES mesas(id),   
     status TEXT NOT NULL DEFAULT 'aberta' CHECK (status IN ('aberta', 'fechada')),
     data_abertura TIMESTAMP DEFAULT NOW(),
     valor_total NUMERIC DEFAULT 0

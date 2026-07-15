@@ -4,33 +4,32 @@ import { View, Text, TextInput, StyleSheet, ActivityIndicator } from 'react-nati
 import BotaoHaptico from '../components/BotaoHaptico';
 import { useAuth } from '../contexts/AuthContext';
 
-export default function Login() {
-  const { entrar } = useAuth();
-  const [nomeUsuario, setNomeUsuario] = useState('');
+export default function Login() { 
+  const { entrar } = useAuth(); //essa função entrar() vem do authcontext.js
+  const [nomeUsuario, setNomeUsuario] = useState(''); //
   const [senha, setSenha] = useState('');
   const [erro, setErro] = useState(null);
   const [enviando, setEnviando] = useState(false);
 
-  async function aoEntrar() {
-    if (!nomeUsuario || !senha) {
-      setErro('preencha usuário e senha');
+  async function aoEntrar() { //se o usuário clicar no botão de entrar, essa função é chamada
+    if (!nomeUsuario || !senha) { // as barras significam "ou"
+      setErro('preencha usuário e senha'); 
       return;
     }
 
-    try {
-      setErro(null);
-      setEnviando(true);
-      await entrar(nomeUsuario, senha);
-      // não precisa navegar manualmente — o AuthContext atualiza "usuario",
-      // e o navigation/index.js troca de stack sozinho quando isso muda
-    } catch (err) {
-      setErro(err.message);
+    try { //se o usuário digitou usuário e senha, tenta entrar
+      setErro(null); //limpa a mensagem de erro
+      setEnviando(true); //mostra o indicador de carregamento
+      await entrar(nomeUsuario, senha); //os valores digitados aqui vão para authcontext.js, lá na função entrar() 
+
+    } catch (err) { //se der erro, mostra a mensagem de erro
+      setErro(err.message);const { entrar } = useAuth();
     } finally {
-      setEnviando(false);
+      setEnviando(false); //esconde o indicador de carregamento
     }
   }
 
-  return (
+  return ( 
     <View style={styles.container}>
       <Text style={styles.titulo}>Cantinho</Text>
 

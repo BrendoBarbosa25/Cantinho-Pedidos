@@ -3,17 +3,18 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { View, ActivityIndicator, TouchableOpacity, Text } from 'react-native';
 
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../../../contexts/AuthContext';
 
-import Login from '../screens/login';
-import ListaMesas from '../screens/ListaMesas';
-import Comanda from '../screens/Comanda';
-import Cozinha from '../screens/Cozinha';
-import Dashboard from '../screens/admin/Dashboard';
-import CriarUsuario from '../screens/admin/CriarUsuario';
-import RelatorioFinanceiro from '../screens/admin/RelatorioFinanceiro';
+import Login from '../../login';
+import ListaMesas from '../../ListaMesas';
+import Comanda from '../../Comanda';
+import Cozinha from '../../Cozinha';
+import Dashboard from '../Dashboard';
+import CriarUsuario from '../CriarUsuario';
+import RelatorioFinanceiro from '../RelatorioFinanceiro';
 
-const Stack = createNativeStackNavigator();
+const Stack = createNativeStackNavigator();  //createNativeStackNavigator é uma função  é uma função da biblioteca React Navigation que cria uma navegação em pilha (stack).
+                                             // Ele permite que o usuário transite entre telas onde cada nova tela é colocada "por cima" da anterior, criando um histórico para o botão de voltar
 
 function BotaoSair() {
   const { sair } = useAuth();

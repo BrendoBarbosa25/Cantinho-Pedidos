@@ -4,13 +4,13 @@ const jwt = require("jsonwebtoken");
 const router = express.Router();
 const pool = require("../db");
 
-// Login
-router.post("/", async (req, res) => { //rota do tipo post (usadas pra criar dados)
+// Login. 
+router.post("/", async (req, res) => { //rota do tipo post (usadas pra criar dados).  recebe usuário/senha, confere no banco, gera o token, devolve resposta
   const { nome_usuario, senha } = req.body; //extrai o nome_usuario e senha do corpo da requisição (body)
 
   // Validação
   if (!nome_usuario || !senha) { // se o nome_usuario ou senha não forem enviados, retorna erro
-    return res.status(400).json({ //erro 400: bad request 
+    return res.status(400).json({ //erro 400: bad  
       erro: "nome_usuario e senha são obrigatórios",
     }); 
   }
@@ -45,12 +45,14 @@ router.post("/", async (req, res) => { //rota do tipo post (usadas pra criar dad
     }
 
     // Gera o token 
-    const token = jwt.sign( //jwt.sign gera o token jwt (JSON Web Token) que é usado para autenticação e autorização do usuário
+    const token = jwt.sign( //jwt.sign gera o token jwt (JSON Web Token) que é usado para autenticação e autorização do usuário. aqui gera o toke assinandoe ele!!!
       { 
         id: usuario.id,
         nome_usuario: usuario.nome_usuario,
         role: usuario.role,
       },
+      //Pega do process.env a senha que garante a autenticidade do token
+      //Impede que usuários maliciosos alterem os dados acima (como o 'role')
       process.env.JWT_SECRET,
       {
         expiresIn: "8h",

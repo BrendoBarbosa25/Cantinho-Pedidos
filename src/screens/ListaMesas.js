@@ -16,7 +16,7 @@ export default function ListaMesas({ navigation }) {
       setCarregando(true);
       setErro(null);
       // busca as duas coisas em paralelo — mais rápido que sequencial
-      const [todasMesas, todasComandas] = await Promise.all([
+      const [todasMesas, todasComandas] = await Promise.all([ //permite executar varias operacoes assincronas ao mesmo tempo e esperar que todas elas terminem para continuar o códig
         listarMesas(),
         listarComandas(),
       ]);
@@ -31,30 +31,30 @@ export default function ListaMesas({ navigation }) {
 
   // Recarrega toda vez que a tela ganha foco — importante ao voltar
   // da tela de Comanda (depois de fechar), pra mesa aparecer livre de novo
-  useFocusEffect(
-    useCallback(() => {
+  useFocusEffect( //hook do rectnative. Ele roda o codigo de dentro dele toda vez que a tela fica visível. se o usuário sair da tela e voltar, ele roda de novo.
+    useCallback(() => { //Ele memoriza a função carregarDados() para que ela não seja recriada sem necessidade a cada renderização da tela.
       carregarDados();
     }, [])
   );
 
-  // Acha se existe uma comanda aberta pra determinada mesa (por id, não número)
+  // aCha se existe uma comanda aberta pra determinada mesa (por id, não número)
   function comandaDaMesa(mesaId) {
     return comandasAbertas.find((c) => c.mesa_id === mesaId);
   }
 
   async function aoTocarNaMesa(mesa) {
-    const comandaExistente = comandaDaMesa(mesa.id);
+    const comandaExistente = comandaDaMesa(mesa.id); // vai passar de comanda em comanda  e checar se o mesaid dela é igual ao mesaID
 
-    if (comandaExistente) {
+    if (comandaExistente) { //se a comanda existir
       // Mesa já tem comanda aberta — só navega pra ela
-      navigation.navigate('Comanda', {
+      navigation.navigate('Comanda', {  //navigation.navigate serve para mudar de tela
         comandaId: comandaExistente.id,
         numeroMesa: mesa.numero,
       });
       return;
     }
 
-    // Mesa livre — abre uma comanda nova antes de navegar
+    // Mesa livre abre uma comanda nova antes de navegar
     try {
       const novaComanda = await abrirComanda(mesa.id);
       navigation.navigate('Comanda', {
