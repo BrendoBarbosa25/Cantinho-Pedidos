@@ -27,24 +27,17 @@ async function apiFetch(caminho, opcoes = {}) { //faz a chamada http anexando o 
     headers,
   });
 
+
   if (response.status === 401) { //se der o erro 401 (nao autorizado)
     await limparSessao(); //limpa a sessão 
+  // Se o token expirou ou é inválido, limpa a sessão local 
+  // a tela que chamou isso deve tratar esse erro e mandar pro login.
   }
 
-  // Antes: assumia sempre JSON e escondia o motivo real do erro.
-  // Agora: se não vier JSON (ex: 404 do Express, HTML de erro do Render),
-  // a gente pega o texto puro e mostra o status, pra dar pra saber a causa.
-  const contentType = response.headers.get('content-type') || '';
-  let corpo = {};
-  if (contentType.includes('application/json')) {
-    corpo = await response.json().catch(() => ({}));
-  } else {
-    const texto = await response.text().catch(() => '');
-    corpo = { erro: texto ? texto.slice(0, 200) : null };
-  }
+  const corpo = await response.json().catch(() => ({}));
 
   if (!response.ok) {
-    throw new Error(corpo.erro || `erro na requisição (status ${response.status})`);
+    throw new Error(corpo.erro || 'erro na requisição');
   }
 
   return corpo;
@@ -83,6 +76,9 @@ export function atualizarStatusMesa(mesaId, status) {
 
 
 // Comandas
+// ---------------------------------------------------------------
+// OBS: o backend agora retorna também "numero_mesa" em cada comanda
+// (útil pra Cozinha e pro Garçom, que não recarregam a lista de mesas toda hora).
 export function listarComandas() {
   return apiFetch('/comandas');
 }
@@ -124,16 +120,35 @@ export function atualizarStatusPedido(pedidoId, status) {
   });
 }
 
-// pega pedidos com um status específico — usado no polling da cozinha/garçom
+// Pega pedidos com um status específico — usado no polling da cozinha/garçom.
+// ALTERADO: agora cada pedido retornado já vem enriquecido com:
+//  - numero_mesa e comanda_id -> pra Cozinha mostrar "de qual mesa" e
+//    pro Garçom identificar em qual mesa acender o aviso de "pronto"
+//  - itens -> pra Cozinha mostrar os itens do pedido, não só o número dele
 export async function listarPedidosPorStatus(status) {
-  // não existe rota direta pra isso ainda — filtramos no app por enquanto,
-  // buscando pedidos de todas as comandas abertas.
-  // Se o volume crescer, vale pedir ao Vitor uma rota GET /pedidos?status=...
   const comandas = await listarComandas();
+
   const todosPedidos = await Promise.all(
-    comandas.map((c) => listarPedidosDaComanda(c.id))
+    comandas.map(async (c) => {
+      const pedidosDaComanda = await listarPedidosDaComanda(c.id);
+      return pedidosDaComanda.map((p) => ({
+        ...p,
+        comanda_id: c.id,
+        numero_mesa: c.numero_mesa,
+      }));
+    })
   );
-  return todosPedidos.flat().filter((p) => p.status === status);
+
+  const pedidosFiltrados = todosPedidos.flat().filter((p) => p.status === status);
+
+  const pedidosComItens = await Promise.all(
+    pedidosFiltrados.map(async (pedido) => ({
+      ...pedido,
+      itens: await listarItensDoPedido(pedido.id),
+    }))
+  );
+
+  return pedidosComItens;
 }
 
 // Itens do pedido
@@ -177,6 +192,10 @@ export function criarUsuario(nome_usuario, senha, role) {
   });
 }
 
+export function listarUsuarios() {
+  return apiFetch('/usuarios');
+}
+
 
 // Relatórios (admin)
 export function buscarFaturamento(inicio, fim) {
@@ -185,8 +204,4 @@ export function buscarFaturamento(inicio, fim) {
   if (fim) params.append('fim', fim);
   const query = params.toString() ? `?${params.toString()}` : '';
   return apiFetch(`/relatorios/faturamento${query}`);
-}
-
-export function listarUsuarios() {
-  return apiFetch('/usuarios');
 }
