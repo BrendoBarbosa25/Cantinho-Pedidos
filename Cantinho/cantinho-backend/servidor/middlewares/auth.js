@@ -1,10 +1,8 @@
 const jwt = require("jsonwebtoken");
 
 function auth(req, res, next) {
-  // Obtém o header Authorization
   const authHeader = req.headers.authorization;
 
-  // Verifica se o token foi enviado
   if (!authHeader) {
     return res.status(401).json({
       erro: "Token não informado",
@@ -29,10 +27,8 @@ function auth(req, res, next) {
   }
 
   try {
-    // Verifica se o token é válido
     const payload = jwt.verify(token, process.env.JWT_SECRET);
 
-    // Disponibiliza os dados do usuário para a rota
     req.usuario = payload;
 
     next();
